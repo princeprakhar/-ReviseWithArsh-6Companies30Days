@@ -1,17 +1,34 @@
-		need=n=n1+n2
+class Solution {
+  public int minimizeSet(int divisor1, int divisor2, int uniqueCnt1, int uniqueCnt2) {
+    final long divisorLcm = lcm(divisor1, divisor2);
+    long l = 0;
+    long r = Integer.MAX_VALUE;
+    while (l < r) {
+      final long m = (l + r) / 2;
+      if (helper(m, divisorLcm, divisor1, divisor2, uniqueCnt1, uniqueCnt2))
+        r = m;
+      else
+        l = m + 1;
+    }
 
-        lcm=math.lcm(d1,d2)
+    return (int) l;
+  }
 
-        while need:
-                        
-            only1 = n // d2 - n // lcm
-            
-            only2 = n // d1 - n // lcm
-            
-            free = n - n // d1 - n // d2 + n // lcm              
-            
-            need= max(max(0, n1 - only1) + max(0, n2 - only2)- free,0)
+  // Returns true if we can take uniqueCnt1 integers from [1..m] to arr1 and
+  // take uniqueCnt2 integers from [1..m] to arr2.
+  private boolean helper(long m, long divisorLcm, int divisor1, int divisor2, int uniqueCnt1,
+                             int uniqueCnt2) {
+    final long cnt1 = m - m / divisor1;
+    final long cnt2 = m - m / divisor2;
+    final long totalCnt = m - m / divisorLcm;
+    return cnt1 >= uniqueCnt1 && cnt2 >= uniqueCnt2 && totalCnt >= uniqueCnt1 + uniqueCnt2;
+  }
 
-            n+=need
+  private long gcd(int a, int b) {
+    return b == 0 ? a : gcd(b, a % b);
+  }
 
-        return n
+  private long lcm(int a, int b) {
+    return a * (b / gcd(a, b));
+  }
+}
